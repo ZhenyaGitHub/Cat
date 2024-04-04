@@ -45,7 +45,7 @@ const args = (0, arg_1.default)({
 let givers = givers_1.givers1000;
 if (args['--givers']) {
     const val = args['--givers'];
-    const allowed = [100, 1000];
+    const allowed = [100, 1000, 10000, 100000];
     if (!allowed.includes(val)) {
         throw new Error('Invalid --givers argument');
     }
@@ -57,6 +57,14 @@ if (args['--givers']) {
         case 1000:
             givers = givers_1.givers1000;
             console.log('Using givers 1 000');
+            break;
+        case 10000:
+                givers = givers_1.givers10000;
+                console.log('Using givers 10,000');
+                break;
+        case 100000:
+            givers = givers_1.givers100000;
+            console.log('Using givers 100,000');
             break;
     }
 }
@@ -95,7 +103,10 @@ if (envAddress) {
         process.exit(1);
     }
 }
+
+let handlers = [];
 let bestGiver = { address: '', coins: 0 };
+let complexityLast;
 function updateBestGivers(liteClient, myAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         const giver = givers[Math.floor(Math.random() * givers.length)];
@@ -103,6 +114,57 @@ function updateBestGivers(liteClient, myAddress) {
             address: giver.address,
             coins: giver.reward,
         };
+    });
+}
+function updateBestGivers2(liteClient) {
+    return __awaiter(this, void 0, void 0, function* () {
+		//console.log('updateBestGivers2 Start')
+        let complexityNew;
+		for (let i = 0; i < givers.length; i++) {
+			const giver = givers[i];
+			const [seed, complexity, iterations] = yield getPowInfo(liteClient, core_1.Address.parse(giver.address));
+			
+			if (!complexityNew) {
+				complexityNew = complexity;
+				
+				bestGiver = {
+					address: giver.address,
+					coins: giver.reward,
+				};
+			} else {
+				if (complexityNew < complexity) {
+					complexityNew = complexity;
+					
+					bestGiver = {
+						address: giver.address,
+						coins: giver.reward,
+					};
+				}
+			}
+
+            console.log('complexity ', i, ': ', complexity)
+            yield delay(200);
+		}
+
+        if (!complexityLast) {
+            complexityLast = complexityNew;
+        } else if (complexityLast != complexityNew) {
+            console.log(`${formatTime()}: Found new job: ${complexityNew}`)
+            complexityLast = complexityNew;
+
+            for (const handle of handlers) {
+                //console.log('handle 1: ', handle);
+                handle.kill('SIGINT');
+                //console.log('handle 2: ', handle);
+            }
+            console.log(`${formatTime()}: best Giver address: ${bestGiver.address}`)
+        }
+
+		/* console.log('')
+        console.log('giver.address', bestGiver.address)
+		console.log('complexityTmp', complexityLast)
+		console.log('') */
+		//console.log('updateBestGivers2 End')
     });
 }
 function getPowInfo(liteClient, address) {
@@ -191,26 +253,33 @@ function main() {
         console.log('Target address:', targetAddress);
         console.log('Date, time, status, seed, attempts, successes, timespent');
         try {
-            yield updateBestGivers(liteClient, wallet.address);
+            // yield updateBestGivers(liteClient, wallet.address);
+            yield updateBestGivers2(liteClient);
         }
         catch (e) {
             console.log('error', e);
             throw Error('no givers');
         }
         setInterval(() => {
-            updateBestGivers(liteClient, wallet.address);
+            // updateBestGivers(liteClient, wallet.address);
+            updateBestGivers2(liteClient);
         }, 5000);
         while (go) {
             const giverAddress = bestGiver.address;
             const [seed, complexity, iterations] = yield getPowInfo(liteClient, core_1.Address.parse(giverAddress));
             if (seed === lastMinedSeed) {
                 // console.log('Wating for a new seed')
-                updateBestGivers(liteClient, wallet.address);
+                // updateBestGivers(liteClient, wallet.address);
+                yield updateBestGivers2(liteClient);
                 yield delay(200);
                 continue;
             }
+            console.log(`${formatTime()}: use complexity: ${complexity}`);
+            console.log(`${formatTime()}: giver address: ${giverAddress}`);
+            console.log(`${formatTime()}: seed: ${seed}`);
+            console.log(`${formatTime()}: iterations: ${iterations}`);
+
             const promises = [];
-            let handlers = [];
             const mined = yield new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 let rest = gpus;
                 for (let i = 0; i < gpus; i++) {
