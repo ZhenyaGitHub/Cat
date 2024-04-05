@@ -107,6 +107,7 @@ if (envAddress) {
 let handlers = [];
 let bestGiver = { address: '', coins: 0 };
 let complexityLast;
+let seedLast;
 function updateBestGivers(liteClient, myAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         const giver = givers[Math.floor(Math.random() * givers.length)];
@@ -120,45 +121,40 @@ function updateBestGivers2(liteClient) {
     return __awaiter(this, void 0, void 0, function* () {
 		//console.log('updateBestGivers2 Start')
         let complexityNew;
-		for (let i = 0; i < givers.length; i++) {
-			const giver = givers[i];
-			const [seed, complexity, iterations] = yield getPowInfo(liteClient, core_1.Address.parse(giver.address));
-			
-			if (!complexityNew) {
-				complexityNew = complexity;
-				
-				bestGiver = {
-					address: giver.address,
-					coins: giver.reward,
-				};
-			} else {
-				if (complexityNew < complexity) {
-					complexityNew = complexity;
-					
-					bestGiver = {
-						address: giver.address,
-						coins: giver.reward,
-					};
-				}
-			}
+       
+        const giver = givers[0];
+        const [seed, complexity, iterations] = yield getPowInfo(liteClient, core_1.Address.parse(giver.address));
+        
+        if (!seedLast) {
+            seedLast = seed;
+            
+            bestGiver = {
+                address: giver.address,
+                coins: giver.reward,
+            };
+        } else {
+            if (seedLast != seed) {
+                seedLast = seed;
+                
+                bestGiver = {
+                    address: giver.address,
+                    coins: giver.reward,
+                };
 
-            console.log('complexity ', i, ': ', complexity)
-            yield delay(200);
-		}
+                console.log(`${formatTime()}: Found new job: ${seed}`)
+                
+                for (const handle of handlers) {
+                    //console.log('handle 1: ', handle);
+                    handle.kill('SIGINT');
+                    //console.log('handle 2: ', handle);
+                }
 
-        if (!complexityLast) {
-            complexityLast = complexityNew;
-        } else if (complexityLast != complexityNew) {
-            console.log(`${formatTime()}: Found new job: ${complexityNew}`)
-            complexityLast = complexityNew;
-
-            for (const handle of handlers) {
-                //console.log('handle 1: ', handle);
-                handle.kill('SIGINT');
-                //console.log('handle 2: ', handle);
+                console.log(`${formatTime()}: best Giver address: ${bestGiver.address}`)
             }
-            console.log(`${formatTime()}: best Giver address: ${bestGiver.address}`)
         }
+
+        //console.log('complexity ', i, ': ', complexity)
+        //yield delay(200);
 
 		/* console.log('')
         console.log('giver.address', bestGiver.address)
@@ -277,7 +273,7 @@ function main() {
             console.log(`${formatTime()}: use complexity: ${complexity}`);
             console.log(`${formatTime()}: giver address: ${giverAddress}`);
             console.log(`${formatTime()}: seed: ${seed}`);
-            console.log(`${formatTime()}: iterations: ${iterations}`);
+            //console.log(`${formatTime()}: iterations: ${iterations}`);
 
             const promises = [];
             const mined = yield new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {

@@ -27,16 +27,16 @@ exports.givers1000 = [
 ];
 
 exports.givers10000 = [
-    { address: "EQBRIpzVOcti35yqhtqdYhSXafr3EGWmlkzsMS5z_52m6JP4", reward: 10000 },
-    { address: "EQBf6Dlx5a_-EBfGuK9iqptvebc8aB16vFYY72xd3afTurLD", reward: 10000 },
-    { address: "EQBiPJRtxuFThiBuhtdJiSwwu6BKLpb3d7MhBZcWvDgpsbDZ", reward: 10000 },
-    { address: "EQBqdBeqGPPTXjuJVmFtY34S0W6mnTme7fB3BWTPH5gYdG0y", reward: 10000 },
+    //{ address: "EQBRIpzVOcti35yqhtqdYhSXafr3EGWmlkzsMS5z_52m6JP4", reward: 10000 },
+    //{ address: "EQBf6Dlx5a_-EBfGuK9iqptvebc8aB16vFYY72xd3afTurLD", reward: 10000 },
+    //{ address: "EQBiPJRtxuFThiBuhtdJiSwwu6BKLpb3d7MhBZcWvDgpsbDZ", reward: 10000 },
+    //{ address: "EQBqdBeqGPPTXjuJVmFtY34S0W6mnTme7fB3BWTPH5gYdG0y", reward: 10000 },
     { address: "EQDq-jMFWjClzL5GvEjSyTLIy86PYrxrzf-_FDvbdHIvDBwX", reward: 10000 },
-    { address: "EQCMSvz6S61trlBVIIGykf4bgQqcGMDx2UK4mxxNBLWu433z", reward: 10000 },
-    { address: "EQAbKk2bCkd32F0Qwvg-U4HzGPw0wzfWFJFDE8ivsKSxg0j-", reward: 10000 },
-    { address: "EQDfc41LT-GRkuHIKtPVAzGYdsyh5q30QPVtb2hTdiXJV2x-", reward: 10000 },
-    { address: "EQBXk9AwSt1johXPzqi6XW_VxJ3S4z0S_Cqm7d4HlERqaLRx", reward: 10000 },
-    { address: "EQAfcub5mRBXbUtNNjhiNnoI6sGVlFif3YD0NCmZ2mwZ_l9c", reward: 10000 }, // 1000
+    //{ address: "EQCMSvz6S61trlBVIIGykf4bgQqcGMDx2UK4mxxNBLWu433z", reward: 10000 },
+    //{ address: "EQAbKk2bCkd32F0Qwvg-U4HzGPw0wzfWFJFDE8ivsKSxg0j-", reward: 10000 },
+    //{ address: "EQDfc41LT-GRkuHIKtPVAzGYdsyh5q30QPVtb2hTdiXJV2x-", reward: 10000 },
+    //{ address: "EQBXk9AwSt1johXPzqi6XW_VxJ3S4z0S_Cqm7d4HlERqaLRx", reward: 10000 },
+    //{ address: "EQAfcub5mRBXbUtNNjhiNnoI6sGVlFif3YD0NCmZ2mwZ_l9c", reward: 10000 }, // 1000
 ];
 
 exports.givers100000 = [
